@@ -22,7 +22,7 @@ class MainActivity : AppCompatActivity() {
         emptyText = findViewById(R.id.emptyText)
         listView = findViewById(R.id.groupsListView)
 
-        // 🔄 Charger les groupes sauvegardés depuis SharedPreferences
+        // Charger les groupes sauvegardés depuis SharedPreferences
         val sharedPref = getSharedPreferences("tricount_data", MODE_PRIVATE)
         for (i in 0..50) {
             val data = sharedPref.getString("group_${i}_data", null)
@@ -34,7 +34,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        // ✅ Adapter avec suppression
+        // Adapter avec suppression
         adapter = GroupAdapter(this, DataHolder.groups) { position ->
             DataHolder.groups.removeAt(position)
             saveGroups()

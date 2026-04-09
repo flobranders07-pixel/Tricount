@@ -15,7 +15,7 @@ class GroupeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_groupe)
 
-        // ✔️ Bouton retour personnalisé (pas de barre mauve)
+        // Bouton retour personnalisé (pas de barre mauve)
         val backButton = findViewById<Button>(R.id.backButton)
         backButton.setOnClickListener {
             finish()
@@ -53,7 +53,7 @@ class GroupeActivity : AppCompatActivity() {
                 group.expenses.remove(expenseToDelete)
                 updateExpensesList(listView, summaryText)
 
-                Toast.makeText(this, "Dépense supprimée ✅", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Dépense supprimée", Toast.LENGTH_SHORT).show()
 
                 val sharedPref = getSharedPreferences("tricount_data", MODE_PRIVATE)
                 val editor = sharedPref.edit()
@@ -68,7 +68,7 @@ class GroupeActivity : AppCompatActivity() {
                 editor.putString("group_${groupIndex}_data", serializeGroup(group))
                 editor.apply()
             },
-            participants = group.participants   // AJOUT ICI
+            participants = group.participants
         )
 
 
