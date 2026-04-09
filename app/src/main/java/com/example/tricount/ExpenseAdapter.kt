@@ -14,7 +14,7 @@ class ExpenseAdapter(
     private val expenses: MutableList<Expense>,
     private val onDelete: (Expense) -> Unit,
     private val onUpdate: () -> Unit,
-    private val participants: List<String>   // ✔️ AJOUT
+    private val participants: List<String>
 ) : BaseAdapter() {
 
     override fun getCount(): Int = expenses.size
@@ -41,25 +41,25 @@ class ExpenseAdapter(
 
         editButton.setOnClickListener {
 
-            // ✔️ Création du layout du dialog
+            // Création du layout du dialog
             val layout = LinearLayout(context)
             layout.orientation = LinearLayout.VERTICAL
             layout.setPadding(40, 20, 40, 10)
 
-            // ✔️ Champ nom
+            // Champ nom
             val nameInput = EditText(context)
             nameInput.setText(expense.name)
             nameInput.hint = "Nom"
             layout.addView(nameInput)
 
-            // ✔️ Champ montant
+            // Champ montant
             val amountInput = EditText(context)
             amountInput.setText(expense.amount.toString())
             amountInput.hint = "Montant"
             amountInput.inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
             layout.addView(amountInput)
 
-            // ✔️ Spinner pour choisir le payeur
+            // Spinner pour choisir le payeur
             val payerSpinner = Spinner(context)
             val spinnerAdapter = ArrayAdapter(context, android.R.layout.simple_spinner_item, participants)
             spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
@@ -67,7 +67,7 @@ class ExpenseAdapter(
             payerSpinner.setSelection(expense.payerIndex)
             layout.addView(payerSpinner)
 
-            // ✔️ Création du dialog
+            // Création du dialog
             AlertDialog.Builder(context)
                 .setTitle("Modifier la dépense")
                 .setView(layout)
@@ -79,10 +79,10 @@ class ExpenseAdapter(
                     if (newName.isNotEmpty()) {
                         expense.name = newName
                         expense.amount = newAmount
-                        expense.payerIndex = newPayerIndex   // ✔️ Mise à jour du payeur
+                        expense.payerIndex = newPayerIndex   // Mise à jour du payeur
 
                         notifyDataSetChanged()
-                        onUpdate()   // ✔️ Recalcul des soldes + sauvegarde
+                        onUpdate()   // Recalcul des soldes + sauvegarde
 
                         Toast.makeText(context, "Dépense modifiée", Toast.LENGTH_SHORT).show()
                     }
