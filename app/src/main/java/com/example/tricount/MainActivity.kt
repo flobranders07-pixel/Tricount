@@ -10,25 +10,26 @@ import android.widget.LinearLayout
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var listView: ListView
-    private lateinit var adapter: GroupAdapter
-    private lateinit var emptyText: TextView
+    private lateinit var listView: ListView //Declaration de ma variable pour la liste des groupes
+    private lateinit var adapter: GroupAdapter // variable pour l'adaptateur qui va gerer l'affichage des groupes dans la liste
+    private lateinit var emptyText: TextView //idem pour le texte quand il y a pas de grp
 
+    //premiere fonction qui s'execute
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_main) //affiche l'ecran qui est cree dans activity_main
 
         val btnCreateGroup = findViewById<Button>(R.id.btnCreateGroup)
         emptyText = findViewById(R.id.emptyText)
         listView = findViewById(R.id.groupsListView)
 
         // Charger les groupes sauvegardés depuis SharedPreferences
-        val sharedPref = getSharedPreferences("tricount_data", MODE_PRIVATE)
-        for (i in 0..50) {
-            val data = sharedPref.getString("group_${i}_data", null)
+        val sharedPref = getSharedPreferences("tricount_data", MODE_PRIVATE) //ouverture fichier de sauvegarde
+        for (i in 0..50) { //boucle pour voir si y'a des groupe deja la
+            val data = sharedPref.getString("group_${i}_data", null) //Est ce qu’il existe un groupe enregistré sous le nom group_0_data
             if (data != null) {
-                val group = deserializeGroup(data)
-                if (group != null) {
+                val group = deserializeGroup(data) //transformer le texte sauvergarder en vrai groupe
+                if (group != null) { // si c ok alors le groupe est ajouter
                     DataHolder.groups.add(group)
                 }
             }
@@ -49,7 +50,7 @@ class MainActivity : AppCompatActivity() {
         listView.setOnItemClickListener { _, _, position, _ ->
             val intent = Intent(this, GroupeActivity::class.java)
             intent.putExtra("groupIndex", position)
-            startActivity(intent)
+            startActivity(intent) //change d'ecran
         }
 
         refreshList()
@@ -65,7 +66,7 @@ class MainActivity : AppCompatActivity() {
         emptyText.visibility = if (DataHolder.groups.isEmpty()) View.VISIBLE else View.GONE
     }
 
-    private fun showCreateGroupDialog() {
+    private fun showCreateGroupDialog() { //fenetre pour cree groupe
         val builder = AlertDialog.Builder(this)
         builder.setTitle("Créer un groupe")
 
@@ -118,22 +119,22 @@ class MainActivity : AppCompatActivity() {
         editor.apply()
     }
 
-    private fun deserializeGroup(data: String): Group? {
+    private fun deserializeGroup(data: String): Group? { //reprendre groupe sous texte et le remettre en vrai groupe
         val parts = data.split("|")
         if (parts.size != 3) return null
 
         val name = parts[0]
         val participants = parts[1].split(",")
         val expenses = parts[2].split(";").mapNotNull {
-            val eParts = it.split(",")
-            if (eParts.size != 3) return@mapNotNull null
-            val eName = eParts[0]
-            val eAmount = eParts[1].toDoubleOrNull() ?: return@mapNotNull null
-            val ePayer = eParts[2].toIntOrNull() ?: return@mapNotNull null
-            Expense(eName, eAmount, ePayer)
+            val eParts = it.split(",") //decoupe chaque depense
+            if (eParts.size != 3) return@mapNotNull null //si pas 3 morceau =>> invalide donc ignore
+            val eName = eParts[0] //recupere le nom de la depense
+            val eAmount = eParts[1].toDoubleOrNull() ?: return@mapNotNull null //converti le montant en nombre
+            val ePayer = eParts[2].toIntOrNull() ?: return@mapNotNull null //converti l'index du payeur en nombre entier
+            Expense(eName, eAmount, ePayer) //refaire une depense bien complete
         }
 
-        return Group(name, participants.toMutableList(), expenses.toMutableList())
+        return Group(name, participants.toMutableList(), expenses.toMutableList()) // fin de la transfo et je renvoi un group
     }
 }
 
