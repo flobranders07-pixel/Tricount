@@ -17,11 +17,11 @@ class ExpenseAdapter(
     private val participants: List<String>
 ) : BaseAdapter() {
 
-    override fun getCount(): Int = expenses.size
-    override fun getItem(position: Int): Expense = expenses[position]
-    override fun getItemId(position: Int): Long = position.toLong()
+    override fun getCount(): Int = expenses.size // Combien de dépenses y a-t-il
+    override fun getItem(position: Int): Expense = expenses[position] // la dépense à cette position
+    override fun getItemId(position: Int): Long = position.toLong() // identifiant unique = la position
 
-    override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
+    override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View { //  fabrique une ligne de la liste des dépenses
         val view = convertView ?: LayoutInflater.from(context)
             .inflate(R.layout.expense_item, parent, false)
 

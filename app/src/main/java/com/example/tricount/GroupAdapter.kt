@@ -7,11 +7,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 
-class GroupAdapter(
-    private val context: Context,
-    private val groups: MutableList<Group>,
-    private val onDelete: (Int) -> Unit
-) : ArrayAdapter<Group>(context, 0, groups) {
+class GroupAdapter( // traducteur entre la liste de groupes et l'affichage dans ListView
+    private val context: Context, // l’écran où je suis
+    private val groups: MutableList<Group>, // la liste des groupes
+    private val onDelete: (Int) -> Unit //  une fonction à appeler quand on supprime un groupe
+) : ArrayAdapter<Group>(context, 0, groups) { // Cet adapter va afficher des objets de type Group
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         val view = convertView ?: LayoutInflater.from(context).inflate(R.layout.group_item, parent, false)

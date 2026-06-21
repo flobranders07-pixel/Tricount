@@ -12,7 +12,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var listView: ListView //Declaration de ma variable pour la liste des groupes
     private lateinit var adapter: GroupAdapter // variable pour l'adaptateur qui va gerer l'affichage des groupes dans la liste
-    private lateinit var emptyText: TextView //idem pour le texte quand il y a pas de grp
+    private lateinit var emptyText: TextView //texte quand il y a pas de grp
 
     //premiere fonction qui s'execute
     override fun onCreate(savedInstanceState: Bundle?) {

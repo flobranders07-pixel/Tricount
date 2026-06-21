@@ -6,16 +6,16 @@ import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 
-class GroupeActivity : AppCompatActivity() {
+class GroupeActivity : AppCompatActivity() { //  crée l’écran qui affiche un groupe et ses dépenses
 
     private var groupIndex = -1
     private lateinit var group: Group
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onCreate(savedInstanceState: Bundle?) { //  Fonction appelée quand l’activité démarre
+        super.onCreate(savedInstanceState) // Appelle la version parent (obliger)
         setContentView(R.layout.activity_groupe)
 
-        // Bouton retour personnalisé (pas de barre mauve)
+        // Bouton retour
         val backButton = findViewById<Button>(R.id.backButton)
         backButton.setOnClickListener {
             finish()
@@ -27,7 +27,7 @@ class GroupeActivity : AppCompatActivity() {
             finish()
             return
         }
-        group = DataHolder.groups[groupIndex]
+        group = DataHolder.groups[groupIndex] // récupère le groupe correspondant dans la liste globale
 
         val title = findViewById<TextView>(R.id.groupTitle)
         val listView = findViewById<ListView>(R.id.expensesListView)
@@ -38,7 +38,7 @@ class GroupeActivity : AppCompatActivity() {
 
         updateExpensesList(listView, summaryText)
 
-        btnAdd.setOnClickListener {
+        btnAdd.setOnClickListener { // bouton ajouter une dépense
             showAddExpenseDialog(listView, summaryText)
         }
     }
@@ -46,7 +46,7 @@ class GroupeActivity : AppCompatActivity() {
     private fun updateExpensesList(listView: ListView, summaryText: TextView) {
         val expensesCopy = group.expenses.toMutableList()
 
-        val adapter = ExpenseAdapter(
+        val adapter = ExpenseAdapter( // crée l’adapter qui affichera chaque dépense
             this,
             expensesCopy,
             onDelete = { expenseToDelete ->
@@ -68,13 +68,15 @@ class GroupeActivity : AppCompatActivity() {
                 editor.putString("group_${groupIndex}_data", serializeGroup(group))
                 editor.apply()
             },
-            participants = group.participants
+            participants = group.participants //passe la liste des participants à l’adapter
         )
 
 
-        listView.adapter = adapter
+        listView.adapter = adapter // affiche l’adapter dans la liste
 
-        val perPerson = DoubleArray(group.participants.size) { 0.0 }
+
+        // Calcul des soldes
+        val perPerson = DoubleArray(group.participants.size) { 0.0 } // Tableau des soldes de chaque personne
         for (e in group.expenses) {
             val share = e.amount / group.participants.size
             for (i in perPerson.indices) perPerson[i] += share
@@ -86,8 +88,8 @@ class GroupeActivity : AppCompatActivity() {
             sb.append("${group.participants[i]} : ${"%.2f".format(perPerson[i])}€\n")
         }
 
-        val transfers = calculateTransfers(perPerson)
-        val fullSummary = sb.toString() + "\n" + transfers.joinToString("\n")
+        val transfers = calculateTransfers(perPerson) // calcule qui doit payer qui
+        val fullSummary = sb.toString() + "\n" + transfers.joinToString("\n") //  affiches le résumé complet
         summaryText.text = fullSummary
     }
 
@@ -95,8 +97,8 @@ class GroupeActivity : AppCompatActivity() {
         val result = mutableListOf<String>()
         val names = group.participants.toList()
 
-        val creditors = mutableListOf<Pair<Int, Double>>()
-        val debtors = mutableListOf<Pair<Int, Double>>()
+        val creditors = mutableListOf<Pair<Int, Double>>() // ceux qui doivent recevoir
+        val debtors = mutableListOf<Pair<Int, Double>>() // ceux qui doivent de l’argent
 
         for (i in perPerson.indices) {
             val balance = perPerson[i]
@@ -106,7 +108,7 @@ class GroupeActivity : AppCompatActivity() {
 
         var c = 0
         var d = 0
-        while (c < creditors.size && d < debtors.size) {
+        while (c < creditors.size && d < debtors.size) { // Tant qu’il reste des gens à équilibrer
             val (ci, cAmount) = creditors[c]
             val (di, dAmount) = debtors[d]
 
@@ -123,17 +125,17 @@ class GroupeActivity : AppCompatActivity() {
         return result
     }
 
-    private fun serializeGroup(group: Group): String {
-        val sb = StringBuilder()
-        sb.append(group.name).append("|")
+    private fun serializeGroup(group: Group): String { // transformer un groupe en texte
+        val sb = StringBuilder() //  construis une ligne de texte
+        sb.append(group.name).append("|") // Nom du groupe
         sb.append(group.participants.joinToString(",")).append("|")
         sb.append(group.expenses.joinToString(";") {
             "${it.name},${it.amount},${it.payerIndex}"
         })
-        return sb.toString()
+        return sb.toString() // renvoies la ligne complète
     }
 
-    private fun showAddExpenseDialog(listView: ListView, summaryText: TextView) {
+    private fun showAddExpenseDialog(listView: ListView, summaryText: TextView) { // fenêtre pour ajouter une dépense
         val builder = AlertDialog.Builder(this)
         builder.setTitle("Ajouter une dépense")
 
@@ -150,7 +152,7 @@ class GroupeActivity : AppCompatActivity() {
         amountInput.inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
         layout.addView(amountInput)
 
-        val payerSpinner = Spinner(this)
+        val payerSpinner = Spinner(this) // Liste déroulante pour choisir qui a payé
         val spinnerAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, group.participants)
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         payerSpinner.adapter = spinnerAdapter
